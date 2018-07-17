@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Enemy
+  - Terrain
   layers:
   - Default
   - TransparentFX
@@ -17,17 +18,17 @@ TagManager:
   - Player
   - Enemy
   - EnemyAttack
+  - EnemyBullet
+  - DeadEnemy
+  - ThrowedEnemy
+  - 
   - Terrain
+  - Float
   - 
   - 
   - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - UnThrowable
+  - ReflectWall
   - 
   - 
   - 
