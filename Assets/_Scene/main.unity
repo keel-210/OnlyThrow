@@ -159,9 +159,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87a392201d5977846a9e1fe5fefac634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Health: 0
   ThrowedSpeed: 40
-  velocityCast: {x: 0, y: 0}
-  CatchedPos: {x: 0, y: 0}
+  HitVelocity: {x: 0, y: 0}
 --- !u!95 &668677
 Animator:
   serializedVersion: 3
@@ -193,7 +193,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 10
+  m_GravityScale: 1
   m_Material: {fileID: 0}
   m_Interpolate: 2
   m_SleepingMode: 0
@@ -483,6 +483,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 5
   JumpPower: 12
+  RollingSpeed: 10
+  RollingLimitTime: 0.4
   OnGroundFilter:
     useTriggers: 0
     useLayerMask: 0
@@ -498,6 +500,7 @@ MonoBehaviour:
     minNormalAngle: 0
     maxNormalAngle: 0
   OnGround: 0
+  IsRolling: 0
 --- !u!95 &723506657
 Animator:
   serializedVersion: 3
@@ -1022,8 +1025,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1447401212}
   - component: {fileID: 1447401213}
-  m_Layer: 8
-  m_Name: ThrowableCollider
+  m_Layer: 25
+  m_Name: CatchCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1103,9 +1106,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87a392201d5977846a9e1fe5fefac634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Health: 0
   ThrowedSpeed: 40
-  velocityCast: {x: 0, y: 0}
-  CatchedPos: {x: 0, y: 0}
+  HitVelocity: {x: 0, y: 0}
 --- !u!95 &1611297157
 Animator:
   serializedVersion: 3
@@ -1137,7 +1140,7 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 10
+  m_GravityScale: 1
   m_Material: {fileID: 0}
   m_Interpolate: 2
   m_SleepingMode: 0
@@ -1309,7 +1312,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1894621721
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1430,9 +1433,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87a392201d5977846a9e1fe5fefac634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Health: 0
   ThrowedSpeed: 40
-  velocityCast: {x: 0, y: 0}
-  CatchedPos: {x: 0, y: 0}
+  HitVelocity: {x: 0, y: 0}
 --- !u!1 &1968470268
 GameObject:
   m_ObjectHideFlags: 0

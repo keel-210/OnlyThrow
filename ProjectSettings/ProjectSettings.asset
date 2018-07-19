@@ -633,7 +633,7 @@ PlayerSettings:
   cloudServicesEnabled:
     UNet: 1
   facebookSdkVersion: 7.9.4
-  apiCompatibilityLevel: 2
+  apiCompatibilityLevel: 3
   cloudProjectId: 92fc3feb-bd4e-4cbb-a55f-4f5d9846fb85
   projectName: OnlyThrow
   organizationId: keel-210
