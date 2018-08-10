@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - Terrain
+  - VirtualCamera
   layers:
   - Default
   - TransparentFX
@@ -21,10 +22,10 @@ TagManager:
   - EnemyBullet
   - DeadEnemy
   - ThrowedEnemy
-  - 
+  - HitEnemy
   - Terrain
   - Float
-  - 
+  - StageGate
   - 
   - 
   - UnThrowable
@@ -37,7 +38,7 @@ TagManager:
   - PlayerRolling
   - 
   - 
-  - 
+  - Wave
   - 
   m_SortingLayers:
   - name: BackGround

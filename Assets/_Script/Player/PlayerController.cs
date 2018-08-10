@@ -2,28 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, Health, IDamagable
 {
 	//Layers
 	//Player = 8
 	//PlayerCatchCollider = 25
 	//PlayerFloat = 26
 	//PlayerRolling = 27
-	[SerializeField] float Speed, JumpPower, RollingSpeed, RollingLimitTime;
+	[SerializeField] float Speed, JumpPower, RollingSpeed, RollingLimitTime, ShortJumpLimit;
 	[SerializeField] ContactFilter2D OnGroundFilter;
+	[SerializeField] HPBar bar;
 	Rigidbody2D rb;
 	List<IThrowable> CatchedObjs = new List<IThrowable> ();
-	public bool OnGround, IsRolling;
-	float RollingTimer;
+	public bool OnGround;
+	int HasJumpedCount;
+	float JumpTimer;
+	public int health { get { return Health; } set { Health = value; } }
+
+	[SerializeField] int Health;
+	PlayerState state = PlayerState.Idle;
+	PlayerParamater pp;
 	void Start ()
 	{
 		rb = GetComponent<Rigidbody2D> ();
+		pp = GetComponent<PlayerParamater> ();
+		bar.Initialize (transform, GetComponent<Health> (), Vector3.zero, false);
 	}
-
 	void Update ()
 	{
 		OnGround = rb.IsTouching (OnGroundFilter);
-		if (!IsRolling)
+		if (state != PlayerState.Rolling)
 		{
 			if (Input.GetAxis ("Horizontal")!= 0)
 			{
@@ -33,7 +41,7 @@ public class PlayerController : MonoBehaviour
 			{
 				Fall ();
 			}
-			if (Input.GetButtonDown ("Jump"))
+			if (Input.GetButton ("Jump"))
 			{
 				if (!(Input.GetAxisRaw ("Vertical")< 0))
 				{
@@ -65,6 +73,7 @@ public class PlayerController : MonoBehaviour
 	void Walk ()
 	{
 		rb.velocity = new Vector2 (Input.GetAxisRaw ("Horizontal")* Speed, rb.velocity.y);
+		state = PlayerState.Walk;
 		if (Input.GetAxisRaw ("Horizontal")> 0)
 		{
 			transform.rotation = Quaternion.Euler (0, 0, 0);
@@ -76,15 +85,50 @@ public class PlayerController : MonoBehaviour
 	}
 	void Jump ()
 	{
-		rb.velocity = new Vector2 (rb.velocity.x, JumpPower);
+		if (OnGround)
+		{
+			if (Input.GetButtonDown ("Jump"))
+			{
+				rb.velocity = new Vector2 (rb.velocity.x, JumpPower);
+				HasJumpedCount++;
+				JumpTimer = 0;
+			}
+		}
+		else if (HasJumpedCount < 2)
+		{
+			if (Input.GetButtonDown ("Jump"))
+			{
+				rb.velocity = new Vector2 (rb.velocity.x, JumpPower);
+				HasJumpedCount++;
+				JumpTimer = 0;
+			}
+		}
+		JumpTimer += Time.deltaTime;
+		if (JumpTimer < ShortJumpLimit && HasJumpedCount < 2)
+		{
+			rb.velocity = new Vector2 (rb.velocity.x, JumpPower);
+		}
 	}
 	void Fall ()
 	{
-		rb.velocity = new Vector2 (0, rb.velocity.y);
+		rb.velocity = new Vector2 (Mathf.Lerp (rb.velocity.x, 0, 0.01f), rb.velocity.y);
+		if (OnGround)
+		{
+			state = PlayerState.Idle;
+		}
+		else
+		{
+			state = PlayerState.InAir;
+		}
 	}
 	void FallDown ()
 	{
 		gameObject.layer = 26;
+		OnGround = false;
+		StartCoroutine (this.DelayMethod (0.3f, ()=>
+		{
+			gameObject.layer = 8;
+		}));
 	}
 	void Throw ()
 	{
@@ -92,36 +136,50 @@ public class PlayerController : MonoBehaviour
 		{
 			Vector2 MousePos = Camera.main.ScreenToWorldPoint (Input.mousePosition);
 			Vector2 Dir = (MousePos - rb.position).normalized;
-			CatchedObjs[0].Throw (Dir);
-			CatchedObjs.Remove (CatchedObjs[0]);
+			if (CatchedObjs[0] != null)
+			{
+				CatchedObjs[0].Throw (Dir);
+				CatchedObjs.Remove (CatchedObjs[0]);
+			}
+			CatchedObjs.RemoveAll (item => item == null);
 		}
 	}
 	void Rolling ()
 	{
-		if (!IsRolling)
+		if (state != PlayerState.Rolling)
 		{
-			IsRolling = true;
+			state = PlayerState.Rolling;
 			gameObject.layer = 27;
-			RollingTimer = 0;
 		}
-		RollingTimer += Time.deltaTime;
-		rb.velocity = new Vector2 (transform.right.x * RollingSpeed, rb.velocity.y);
-		if (RollingTimer > RollingLimitTime)
+		rb.velocity = new Vector2 (transform.right.x * RollingSpeed, 0);
+		StartCoroutine (this.DelayMethod (RollingLimitTime, ()=>
 		{
-			IsRolling = false;
-		}
+			state = PlayerState.Idle;
+			gameObject.layer = 8;
+		}));
 	}
 	void OnGroundProcess ()
 	{
 		gameObject.layer = 8;
+		if (rb.velocity.y <= 0)
+		{
+			HasJumpedCount = 0;
+		}
+	}
+	public void Damage (int damage)
+	{
+		health -= damage;
 	}
 	void OnTriggerEnter2D (Collider2D obj)
 	{
 		IThrowable it = obj.GetComponent<IThrowable> ();
 		if (it != null)
 		{
-			it.Catch (transform);
-			CatchedObjs.Add (it);
+			IThrowable iThrow = it.Catch (transform);
+			if (iThrow != null)
+			{
+				CatchedObjs.Add (it);
+			}
 		}
 	}
 }

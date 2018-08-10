@@ -5,6 +5,7 @@ using UnityEngine;
 public class ReflectWall : MonoBehaviour, IReflectable
 {
 	[SerializeField] LayerMask mask;
+	[SerializeField] int damage;
 
 	public Vector2 Reflect (Rigidbody2D rb, Vector2 Cast)
 	{
@@ -20,9 +21,9 @@ public class ReflectWall : MonoBehaviour, IReflectable
 			down = hitDown.point - rb.position;
 			right = hitRight.point - rb.position;
 			left = hitLeft.point - rb.position;
-			Vector2 contactPoint = new Vector2 (Mathf.Abs (right.x) < Mathf.Abs (left.x) ? right.x : left.x,
-				Mathf.Abs (up.y) < Mathf.Abs (down.y) ? up.y : down.y);
-			if (Mathf.Abs (contactPoint.x) < Mathf.Abs (contactPoint.y))
+			Vector2 contactPoint = new Vector2 (Mathf.Abs (right.x)< Mathf.Abs (left.x)? right.x : left.x,
+				Mathf.Abs (up.y)< Mathf.Abs (down.y)? up.y : down.y);
+			if (Mathf.Abs (contactPoint.x)< Mathf.Abs (contactPoint.y))
 			{
 				ReflectVec = new Vector2 (-Cast.x, Cast.y);
 			}
@@ -43,6 +44,11 @@ public class ReflectWall : MonoBehaviour, IReflectable
 			Debug.Log ("Right" + Physics2D.Raycast (rb.position, Vector2.right, 100f, mask).point.ToString ("F5"));
 			Debug.Log ("Left" + Physics2D.Raycast (rb.position, Vector2.left, 100f, mask).point.ToString ("F5"));
 			UnityEditor.EditorApplication.isPaused = true;
+		}
+		IDamagable IDam = rb.gameObject.GetComponent<IDamagable> ();
+		if (IDam != null)
+		{
+			IDam.Damage (damage);
 		}
 		return ReflectVec;
 	}

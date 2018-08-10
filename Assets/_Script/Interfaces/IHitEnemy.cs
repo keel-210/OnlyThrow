@@ -1,4 +1,5 @@
+using UnityEngine;
 public interface IHitEnemy
 {
-	void HitEnemy ();
+	void HitEnemy (Vector2 HitDir, int damage);
 }

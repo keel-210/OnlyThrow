@@ -5,7 +5,7 @@ using UnityEngine;
 public class CamColliderFitter : MonoBehaviour
 {
 	[SerializeField] Camera TargetCam;
-	void Start ()
+	void Update ()
 	{
 		var worldHeight = TargetCam.orthographicSize * 2f;
 		var worldWidth = worldHeight / Screen.height * Screen.width;
